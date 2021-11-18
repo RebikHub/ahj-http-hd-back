@@ -1,11 +1,13 @@
-// const port = process.env.PORT || 7070;
-// const server = http.createServer(app.callback()).listen(port);
-
-const Koa = require('koa');
-const app = new Koa();
-
-app.use(async ctx => {
-  ctx.body = 'Hello World';
+const http = require('http');
+const server = http.createServer((req,res) => {
+    console.log(req);
+    res.end('server response');
 });
-
-app.listen(3000);
+const port = 7070;
+server.listen(port,(err )=> {
+    if(err){
+        console.log('Error occured:',error);
+        return;
+    }
+    console.log(`server is listening on ${port}`);
+});
