@@ -25,7 +25,7 @@ app.use(ctx => {
 // const tickets = [ticket, ticketFull];
 
 // app.use(async ctx => {
-//     ctx.body = 'Hello ddd World';
+//     // ctx.body = 'Hello ddd World';
 //     const { method } = ctx.request.querystring;
 //     console.log(method);
 //     switch (method) {
@@ -34,7 +34,7 @@ app.use(ctx => {
 //             return;
 //         // TODO: обработка остальных методов
 //         default:
-//             ctx.response.status = 404;
+//             ctx.response.status = 403;
 //             return;
 //     }
 // });
