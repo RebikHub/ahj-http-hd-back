@@ -1,13 +1,39 @@
-const http = require('http');
-const server = http.createServer((req,res) => {
-    console.log(req);
-    res.end('server response');
+const Koa = require('koa');
+const app = new Koa();
+
+app.use(async ctx => {
+  ctx.body = 'Hello World';
 });
-const port = 7070;
-server.listen(port,(err )=> {
-    if(err){
-        console.log('Error occured:',error);
-        return;
+
+app.listen(3333);
+
+const ticket = {
+    id, // идентификатор (уникальный в пределах системы)
+    name, // краткое описание
+    status, // boolean - сделано или нет
+    created, // дата создания (timestamp)
+}
+
+const ticketFull = {
+    id, // идентификатор (уникальный в пределах системы)
+    name, // краткое описание
+    description, // полное описание
+    status, // boolean - сделано или нет
+    created, // дата создания (timestamp)
+}
+
+const tickets = [ticket, ticketFull];
+
+app.use(async ctx => {
+    const { method } = ctx.request.querystring;
+
+    switch (method) {
+        case 'allTickets':
+            ctx.response.body = tickets;
+            return;
+        // TODO: обработка остальных методов
+        default:
+            ctx.response.status = 404;
+            return;
     }
-    console.log(`server is listening on ${port}`);
 });
