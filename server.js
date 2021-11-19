@@ -2,11 +2,6 @@ const Koa = require('koa');
 const app = new Koa();
 const port = process.env.PORT || 3333;
 
-// app.use(ctx => {
-//     ctx.body = 'Hello Koa';
-// });
-
-
 const ticket = {
     id: 'идентификатор (уникальный в пределах системы)',
     name: 'краткое описание',
@@ -24,18 +19,6 @@ const ticketFull = {
 
 const tickets = [ticket, ticketFull];
 
-app.use(async ctx => {
-    // ctx.body = 'Hello ddd World';
-    console.log(ctx.request.url);
-    if (ctx.request.url === '/ticket') {
-        ctx.response.body = ticket;
-    }
-    // ctx.response.body = ticket;
-    // console.log(ctx.response);
-});
-
-app.listen(port);
-
 app.use(async (ctx, next) => {
     const origin = ctx.request.get('Origin');
     if (!origin) {
@@ -47,7 +30,7 @@ app.use(async (ctx, next) => {
         try {
             return await next();
         } catch (e) {
-            e.headers = {...e.headers,...headers};
+            e.headers = {...e.headers, ...headers};
             throw e;
         }
     }
@@ -56,6 +39,30 @@ app.use(async (ctx, next) => {
         if (ctx.request.get('Access-Control-Request-Headers')) {
             ctx.response.set('Access-Control-Allow-Headers', ctx.request.get('Access-Control-Allow-Request-Headers'));
         }
-        ctx.response.status=204;// No content
+        ctx.response.status = 204;// No content
     }
 });
+
+// app.use(async ctx => {
+//     const { method } = ctx.request.querystring;
+//     console.log(ctx.request.url);
+//     console.log(ctx.request.querystring);
+//     switch (method) {
+//         case 'allTickets':
+//             ctx.response.body = tickets;
+//             return;
+//         // TODO: обработка остальных методов
+//         default:
+//             ctx.response.status = 404;
+//             return;
+//     }
+// });
+
+app.use(async ctx => {
+    console.log(ctx.body);
+    if (ctx.request.url === '/create') {
+        console.log(ctx.response);
+    }
+});
+
+app.listen(port, () => console.log('Server started'));

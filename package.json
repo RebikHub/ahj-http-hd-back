@@ -6,7 +6,8 @@
   "scripts": {
     "start-for": "forever start --minUptime 1000 --spinSleepTime 1000 server.js",
     "start": "forever server.js",
-    "watch": "forever -w server.js"
+    "watch": "forever -w server.js",
+    "start-node": "nodemon server.js"
   },
   "engines": {
     "node": "12"
