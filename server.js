@@ -1,6 +1,9 @@
 const Koa = require('koa');
 const app = new Koa();
+// const uuidv4 = require("uuid/v4");
 const port = process.env.PORT || 3333;
+
+// uuidv4()
 
 const ticket = {
     id: 'идентификатор (уникальный в пределах системы)',
@@ -43,26 +46,21 @@ app.use(async (ctx, next) => {
     }
 });
 
-// app.use(async ctx => {
-//     const { method } = ctx.request.querystring;
-//     console.log(ctx.request.url);
-//     console.log(ctx.request.querystring);
-//     switch (method) {
-//         case 'allTickets':
-//             ctx.response.body = tickets;
-//             return;
-//         // TODO: обработка остальных методов
-//         default:
-//             ctx.response.status = 404;
-//             return;
-//     }
-// });
-
 app.use(async ctx => {
-    console.log(ctx.body);
-    if (ctx.request.url === '/create') {
-        console.log(ctx.response);
+    if (ctx.request.url === '/allTickets') {
+        console.log(ctx.request.url);
+        ctx.response.body = tickets;
+        return;
+            // ctx.response.status = 404;
+            // return;
     }
 });
+
+// app.use(async ctx => {
+//     console.log(ctx.request);
+//     if (ctx.request.url === '/create') {
+//         console.log(ctx.response);
+//     }
+// });
 
 app.listen(port, () => console.log('Server started'));
