@@ -1,26 +1,11 @@
+const data = require('./tickets');
 const Koa = require('koa');
+const koaBody = require('koa-body');
 const app = new Koa();
-// const uuidv4 = require("uuid/v4");
+const { v4: uuidv4 } = require('uuid');
 const port = process.env.PORT || 3333;
 
-// uuidv4()
-
-const ticket = {
-    id: 'идентификатор (уникальный в пределах системы)',
-    name: 'краткое описание',
-    status: 'boolean - сделано или нет',
-    created: 'дата создания (timestamp)'
-}
-
-const ticketFull = {
-    id: 'идентификатор (уникальный в пределах системы)',
-    name: 'краткое описание',
-    description: 'полное описание',
-    status: 'boolean - сделано или нет',
-    created: 'дата создания (timestamp)'
-}
-
-const tickets = [ticket, ticketFull];
+app.use(koaBody({ urlencoded:true, }));
 
 app.use(async (ctx, next) => {
     const origin = ctx.request.get('Origin');
@@ -47,20 +32,76 @@ app.use(async (ctx, next) => {
 });
 
 app.use(async ctx => {
-    if (ctx.request.url === '/allTickets') {
-        console.log(ctx.request.url);
-        ctx.response.body = tickets;
+    const method = ctx.request.querystring;
+    if (method === 'allTickets') {
+        ctx.response.body = data.tickets;
         return;
-            // ctx.response.status = 404;
-            // return;
     }
+
+    if (method.includes('ticketById')) {
+        const inid = method.slice(14);
+        data.fullTickets.forEach((item) => {
+            if (item.id === inid) {
+                ctx.response.body = item.description;
+            }
+        })
+        return;
+    }
+
+    if (method.includes('deleteId')) {
+        const inid = method.slice(12);
+        let indexF = null;
+        let index = null;
+        data.fullTickets.forEach((item, i) => {
+            if (item.id === inid) {
+                indexF = i;
+            }
+        })
+        data.fullTickets.splice(indexF, 1);
+        data.tickets.forEach((item, i) => {
+            if (item.id === inid) {
+                index = i;
+            }
+        })
+        data.tickets.splice(index, 1);
+        return;
+    }
+
+    if (method === 'createTicket') {
+        const ticket = JSON.parse(ctx.request.body);
+        console.log(ticket.id);
+        if (ticket.id) {
+            console.log(ticket);
+            data.tickets.forEach((item) => {
+                if (item.id === ticket.id) {
+                    item.name = ticket.name;
+                    item.status = ticket.status;
+                }
+            })
+            data.fullTickets.forEach((item) => {
+                if (item.id === ticket.id) {
+                    item.name = ticket.name;
+                    item.description = ticket.description;
+                    item.status = ticket.status;
+                }
+            })
+            return;
+        }
+        ticket.id = uuidv4();
+        data.fullTickets.push(ticket);
+        data.tickets.push({
+            id: ticket.id,
+            name: ticket.name,
+            status: ticket.status,
+            created: ticket.created
+        });
+        ctx.response.status = 200;
+        return;
+    }
+
+    ctx.response.status = 404;
+    return;
 });
 
-// app.use(async ctx => {
-//     console.log(ctx.request);
-//     if (ctx.request.url === '/create') {
-//         console.log(ctx.response);
-//     }
-// });
 
 app.listen(port, () => console.log('Server started'));
