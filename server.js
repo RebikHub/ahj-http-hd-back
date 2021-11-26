@@ -32,26 +32,24 @@ app.use(async (ctx, next) => {
 });
 
 app.use(async ctx => {
-    const method = ctx.request.querystring;
+    const { method, id } = ctx.request.query;
     if (method === 'allTickets') {
         ctx.response.body = data.tickets;
         return;
     }
 
-    if (method.includes('ticketById')) {
-        const inid = method.slice(14);
+    if (method === 'ticketById') {
         data.fullTickets.forEach((item) => {
-            if (item.id === inid) {
+            if (item.id === id) {
                 ctx.response.body = item.description;
             }
         })
         return;
     }
 
-    if (method.includes('statusId')) {
-        const inid = method.slice(12);
+    if (method === 'statusId') {
         data.fullTickets.forEach((item) => {
-            if (item.id === inid) {
+            if (item.id === id) {
                 if (item.status === true) {
                     item.status = false;
                 } else {
@@ -60,7 +58,7 @@ app.use(async ctx => {
             }
         })
         data.tickets.forEach((item) => {
-            if (item.id === inid) {
+            if (item.id === id) {
                 if (item.status === true) {
                     item.status = false;
                 } else {
@@ -71,18 +69,17 @@ app.use(async ctx => {
         return;
     }
 
-    if (method.includes('deleteId')) {
-        const inid = method.slice(12);
+    if (method === 'deleteId') {
         let indexF = null;
         let index = null;
         data.fullTickets.forEach((item, i) => {
-            if (item.id === inid) {
+            if (item.id === id) {
                 indexF = i;
             }
         })
         data.fullTickets.splice(indexF, 1);
         data.tickets.forEach((item, i) => {
-            if (item.id === inid) {
+            if (item.id === id) {
                 index = i;
             }
         })
