@@ -48,6 +48,29 @@ app.use(async ctx => {
         return;
     }
 
+    if (method.includes('statusId')) {
+        const inid = method.slice(12);
+        data.fullTickets.forEach((item) => {
+            if (item.id === inid) {
+                if (item.status === true) {
+                    item.status = false;
+                } else {
+                    item.status = true;
+                }
+            }
+        })
+        data.tickets.forEach((item) => {
+            if (item.id === inid) {
+                if (item.status === true) {
+                    item.status = false;
+                } else {
+                    item.status = true;
+                }
+            }
+        })
+        return;
+    }
+
     if (method.includes('deleteId')) {
         const inid = method.slice(12);
         let indexF = null;
@@ -69,9 +92,8 @@ app.use(async ctx => {
 
     if (method === 'createTicket') {
         const ticket = JSON.parse(ctx.request.body);
-        console.log(ticket.id);
+
         if (ticket.id) {
-            console.log(ticket);
             data.tickets.forEach((item) => {
                 if (item.id === ticket.id) {
                     item.name = ticket.name;
