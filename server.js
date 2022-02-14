@@ -20,7 +20,7 @@ app.use(
 app.use(async ctx => {
     const { method, id } = ctx.request.query;
     if (method === 'allTickets') {
-        ctx.response.body = data.tickets;
+        ctx.response.body = JSON.stringify(data.tickets);
         return;
     }
 
